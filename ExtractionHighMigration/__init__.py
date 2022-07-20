@@ -7,7 +7,7 @@ Your app description
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'ExtractionHigh'
+    NAME_IN_URL = 'ExtractionHighMigration'
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 1
     INITIAL_STOCK = 101
@@ -56,6 +56,8 @@ def calculate_remaining_stock(group):
     if group.current_stock > 0:
         new_stock = round((group.current_stock - p1.fished_amount - p2.fished_amount - p3.fished_amount) * C.REGROWTH_RATE)
         group.current_stock = 101 if new_stock > 101 else new_stock
+
+
 
 
 # PAGES

@@ -2,7 +2,7 @@ from os import environ
 
 SESSION_CONFIGS = [
     dict(
-        name='ExtractionHigh', app_sequence=['ExtractionHigh'], num_demo_participants=3
+        name='ExtractionHighMigration', app_sequence=['ExtractionHighMigration'], num_demo_participants=3
     )
     # dict(
     #     name='public_goods',
