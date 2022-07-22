@@ -4,5 +4,7 @@
 
 {{ block content }}
 
-        {{ next_button }}
+ <p> You Failed to answer the first question correct. </p>
+
+{{ next_button }}
 {{ endblock }}
