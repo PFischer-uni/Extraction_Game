@@ -1,0 +1,13 @@
+{{ block title }}Player ({{player.id_in_group}}) Extraction Game: Your Choice{{ endblock }}
+{{ block content }}
+
+    <p>
+        There are {{if player.round_number > 1 }} now {{ endif }} <b>{{ group.current_stock }}</b> fishes in the lake.
+        {{if player.round_number > 1 }} Your teammates have fished <b>{{ others_total_fished_amount }}</b> fishes in the previous round.{{ endif }}
+    </p>
+
+    {{ formfields }}
+
+    {{ next_button }}
+
+{{ endblock }}

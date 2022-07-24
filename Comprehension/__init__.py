@@ -109,7 +109,7 @@ class comprehension4(Page):
     def error_message(player: Player, values):
         # alternatively, you could make quiz1_error_message, quiz2_error_message, etc.
         # but if you have many similar fields, this is more efficient.
-        solutions = dict(quiz2=17)
+        solutions = dict(quiz4=17)
 
         # error_message can return a dict whose keys are field names and whose
         # values are error messages

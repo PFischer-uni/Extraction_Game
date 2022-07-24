@@ -1,0 +1,15 @@
+{{ block title }}
+    Results
+{{ endblock }}
+{{ block content }}
+
+    <p>
+        The remaining amount of fish in the lake is: <b>{{ if player.id_in_group != 3 }} {{ group.current_stock_A }} {{ else }} {{ group.current_stock_B  }} {{ endif }}</b>
+    </p>
+
+    <p>
+        Your total payoff is: <b>{{ player.participant.payoff }}</b>
+    </p>
+
+{{ next_button }}
+{{ endblock }}
