@@ -37,13 +37,21 @@ class Group(BaseGroup):
         label="Fishes left"
     )
 
+
 class Player(BasePlayer):
     fished_amount = models.IntegerField(
+        widget=widgets.RadioSelect,
         initial=0,
         min=0,
         max=C.MAX_EXTRACTION[-1],
         doc="""Amount fished at round""",
         label="How much do you want to fish?"
+    )
+    belief = models.IntegerField(
+        min=0,
+        max=C.MAX_EXTRACTION[-1],
+        doc="""Belief about what the other has fished""",
+        label="How many fish do you believe your teammate has caught in the previous round?"
     )
 
 
@@ -63,6 +71,7 @@ def fished_amount_choices(player):
             1
         )
 
+
 def calculate_remaining_stock_A(group):
     current_round = group.round_number
     if current_round > 1:
@@ -75,6 +84,7 @@ def calculate_remaining_stock_A(group):
             new_stock = round((previous_stock - p1_fished - p2_fished) * C.REGROWTH_RATE)
             group.current_stock_A = C.INITIAL_STOCK_A if new_stock > C.INITIAL_STOCK_A else new_stock
 
+
 def calculate_remaining_stock_B(group):
     current_round = group.round_number
     if current_round > 1:
@@ -84,6 +94,7 @@ def calculate_remaining_stock_B(group):
             p3_fished = p3.in_round(current_round - 1).fished_amount
             new_stock = round((previous_stock - p3_fished) * C.REGROWTH_RATE)
             group.current_stock_B = C.INITIAL_STOCK_B if new_stock > C.INITIAL_STOCK_B else new_stock
+
 
 # PAGES
 class CalculateRemainingStock(WaitPage):
@@ -105,7 +116,6 @@ class Fishing(Page):
             return player.group.current_stock_A > 3
 
 
-
     @staticmethod
     def vars_for_template(player: Player):
         current_round = player.round_number
@@ -119,6 +129,15 @@ class Fishing(Page):
     def before_next_page(player: Player, timeout_happened):
         player.payoff += player.fished_amount
         return
+
+
+class Belief(Page):
+    form_model = 'player'
+    form_fields = ['belief']
+
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.id_in_group != 3
 
 
 class WaitEndOfRound(WaitPage):
@@ -139,6 +158,19 @@ class WaitEndOfRound(WaitPage):
             p2.participant.payoff += leftover_A
             p3.participant.payoff += group.current_stock_B
 
+            players_history = [p1.in_all_rounds(), p2.in_all_rounds()]
+            belief_payoffs = [0, 0]
+
+            for player in [0, 1]:
+                i = 0
+                for players_round in players_history[player]:
+                    if players_round.belief == players_history[(player + 1) % 2][i].fished_amount:
+                        belief_payoffs[player] += 100
+                    i += 1
+
+            p1.participant.payoff += belief_payoffs[0]
+            p2.participant.payoff += belief_payoffs[1]
+
 
 class Results(Page):
     @staticmethod
@@ -146,4 +178,4 @@ class Results(Page):
         return player.round_number == 10
 
 
-page_sequence = [CalculateRemainingStock, Fishing, WaitEndOfRound, Results]
+page_sequence = [CalculateRemainingStock, Fishing, Belief, WaitEndOfRound, Results]

@@ -32,6 +32,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     fished_amount = models.IntegerField(
+        widget=widgets.RadioSelect,
         initial=0,
         min=0,
         max=C.MAX_EXTRACTION[-1],
