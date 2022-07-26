@@ -2,9 +2,9 @@
 {{ block content }}
 
     <p>
-        There are {{if player.round_number > 1 }} now {{ endif }} <b>{{ group.current_stock }}</b> fishes in the lake.
+        There are {{if player.round_number > 1 }} now {{ endif }} <b>{{ group.current_stock }}</b> fish in the lake.
         {{if player.round_number > 1 }} Your {{if player.round_number > 5 }}teammates have {{else}} teammate has
-        {{ endif }} fished <b>{{ others_total_fished_amount }}</b> fishes in the previous round.{{ endif }}
+        {{ endif }} caught <b>{{ others_total_fished_amount }}</b> fish in the previous round.{{ endif }}
     </p>
 
     {{ formfields }}

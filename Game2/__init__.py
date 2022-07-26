@@ -70,6 +70,9 @@ def calculate_remaining_stock(group):
 class CalculateRemainingStock(WaitPage):
     after_all_players_arrive = calculate_remaining_stock
 
+    titel_text = "Please Wait"
+    body_text = " The game will continue shortly."
+
 
 class Fishing(Page):
     form_model = 'player'
@@ -112,6 +115,9 @@ class WaitEndOfRound(WaitPage):
             players = group.get_players()
             for player in players:
                 player.participant.payoff += leftover_per_player
+
+    titel_text = "Please Wait"
+    body_text = " The game will continue shortly."
 
 
 class Results(Page):

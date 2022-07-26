@@ -13,7 +13,7 @@ class C(BaseConstants):
     NUM_ROUNDS = 10
     INITIAL_STOCK_A = 101
     MAX_EXTRACTION = [0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
-    INITIAL_STOCK_B = 21
+    INITIAL_STOCK_B = 15
     REGROWTH_RATE = 1.1
 
 
@@ -47,7 +47,7 @@ class Player(BasePlayer):
         doc="""Amount fished at round""",
         label="How much do you want to fish?"
     )
-    belief = models.IntegerField(
+    empirical_belief = models.IntegerField(
         min=0,
         max=C.MAX_EXTRACTION[-1],
         doc="""Belief about what the other has fished""",
@@ -103,6 +103,9 @@ class CalculateRemainingStock(WaitPage):
         calculate_remaining_stock_A(group)
         calculate_remaining_stock_B(group)
 
+    titel_text = "Please Wait"
+    body_text = " The game will continue shortly."
+
 
 class Fishing(Page):
     form_model = 'player'
@@ -133,7 +136,7 @@ class Fishing(Page):
 
 class Belief(Page):
     form_model = 'player'
-    form_fields = ['belief']
+    form_fields = ['empirical_belief']
 
     @staticmethod
     def is_displayed(player: Player):
@@ -164,13 +167,15 @@ class WaitEndOfRound(WaitPage):
             for player in [0, 1]:
                 i = 0
                 for players_round in players_history[player]:
-                    if players_round.belief == players_history[(player + 1) % 2][i].fished_amount:
+                    if players_round.empirical_belief == players_history[(player + 1) % 2][i].fished_amount:
                         belief_payoffs[player] += 100
                     i += 1
 
             p1.participant.payoff += belief_payoffs[0]
             p2.participant.payoff += belief_payoffs[1]
 
+    titel_text = "Please Wait"
+    body_text = " The game will continue shortly."
 
 class Results(Page):
     @staticmethod

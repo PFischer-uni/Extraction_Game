@@ -2,8 +2,10 @@
 {{ block content }}
 
     <p>
-        There are {{if player.round_number > 1 }} now {{ endif }} <b>{{ if player.id_in_group != 3 }} {{ group.current_stock_A }} {{ else }} {{ group.current_stock_B  }} {{ endif }}</b> fishes in the lake.
-        {{if player.round_number > 1 and player.id_in_group != 3}} Your teammate has fished <b>{{ other_player_fished_amount }}</b> fishes in the previous round.{{ endif }}
+        There are {{if player.round_number > 1 }} now {{ endif }} <b>{{ if player.id_in_group != 3 }}
+        {{ group.current_stock_A }} {{ else }} {{ group.current_stock_B  }} {{ endif }}</b> fish in the lake.
+        {{if player.round_number > 1 and player.id_in_group != 3}} Your teammate has caught
+        <b>{{ other_player_fished_amount }}</b> fish in the previous round.{{ endif }}
     </p>
 
     {{ formfields }}
