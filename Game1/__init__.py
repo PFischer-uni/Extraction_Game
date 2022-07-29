@@ -11,9 +11,12 @@ class C(BaseConstants):
     NAME_IN_URL = 'Game1'
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 10
-    INITIAL_STOCK_A = 101
-    MAX_EXTRACTION = [0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
-    INITIAL_STOCK_B = 15
+    INITIAL_STOCK_A = 120
+    MAX_EXTRACTION = [0,0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,9,9,9,9,9,
+                      10,10,10,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,12,12,12,12,12,12,
+                      12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
+                      13,13,13,13,13,13,13,13,13]
+    INITIAL_STOCK_B = 40
     REGROWTH_RATE = 1.1
 
 
@@ -67,7 +70,7 @@ def fished_amount_choices(player):
     else:
         return range(
             0,
-            C.MAX_EXTRACTION[group.current_stock_B] + 1,
+            C.MAX_EXTRACTION[group.current_stock_B]+1,
             1
         )
 
@@ -104,7 +107,7 @@ class CalculateRemainingStock(WaitPage):
         calculate_remaining_stock_B(group)
 
     titel_text = "Please Wait"
-    body_text = " The game will continue shortly."
+    body_text = "The game will continue shortly."
 
 
 class Fishing(Page):
