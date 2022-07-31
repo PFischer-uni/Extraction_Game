@@ -39,6 +39,26 @@ class Player(BasePlayer):
         doc="""Amount fished at round""",
         label="How much do you want to fish?"
     )
+    empirical_belief_A = models.IntegerField(
+        min=0,
+        max=C.MAX_EXTRACTION[-1],
+        doc="""Belief about what the teammate with lowest id has fished""",
+    )
+    empirical_belief_B = models.IntegerField(
+        min=0,
+        max=C.MAX_EXTRACTION[-1],
+        doc="""Belief about what the teammate with highest id has fished""",
+    )
+    normative_belief_A = models.IntegerField(
+        min=0,
+        max=C.MAX_EXTRACTION[-1],
+        doc="""Belief about what Player 1 should have fished""",
+    )
+    normative_belief_B = models.IntegerField(
+        min=0,
+        max=C.MAX_EXTRACTION[-1],
+        doc="""Belief about what Player 2 should have fished""",
+    )
 
 
 # FUNCTIONS
@@ -64,13 +84,14 @@ def calculate_remaining_stock(group):
             p3_fished = p3.in_round(current_round - 1).fished_amount
             new_stock = round((previous_stock - p1_fished - p2_fished - p3_fished) * C.REGROWTH_RATE)
             group.current_stock = C.INITIAL_STOCK if new_stock > C.INITIAL_STOCK else new_stock
+        else:
+            group.current_stock = previous_stock
 
 
 # PAGES
 class CalculateRemainingStock(WaitPage):
     after_all_players_arrive = calculate_remaining_stock
 
-    titel_text = "Please Wait"
     body_text = " The game will continue shortly."
 
 
@@ -88,12 +109,13 @@ class Fishing(Page):
     @staticmethod
     def vars_for_template(player: Player):
         current_round = player.round_number
-        others_total_fished_amount = 0
+        fished_amount_A = 0
+        fished_amount_B = 0
         if current_round > 1:
-            others = player.get_others_in_group()
-            for other in others:
-                others_total_fished_amount += other.in_round(current_round - 1).fished_amount
-        return dict(others_total_fished_amount=others_total_fished_amount)
+            teammates = player.get_others_in_group()
+            fished_amount_A = teammates[0].in_round(current_round - 1).fished_amount
+            fished_amount_B = teammates[1].in_round(current_round - 1).fished_amount
+        return dict(fished_amount_A=fished_amount_A, fished_amount_B=fished_amount_B)
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
@@ -101,11 +123,48 @@ class Fishing(Page):
         return
 
 
+class Belief(Page):
+    form_model = 'player'
+
+    @staticmethod
+    def get_form_fields(player):
+        if player.round_number > 5:
+            if player.id_in_group != 3:
+                return ['empirical_belief_A', 'empirical_belief_B']
+            else:
+                return ['empirical_belief_A', 'empirical_belief_B', 'normative_belief_A', 'normative_belief_B']
+        else:
+            return ['empirical_belief_A']
+
+    @staticmethod
+    def is_displayed(player: Player):
+        skipped_round = False
+        current_round = player.round_number
+        if current_round > 1:
+            skipped_round = player.group.in_round(current_round - 1).current_stock < 3
+        return (player.id_in_group != 3 or player.round_number > 5) and not skipped_round
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        label_belief_A_local = 'How many fish do you believe your <b>teammate</b> has caught in the previous round?'
+        label_belief_B_local = 'How many fish do you believe the <b>new fisher</b> has caught in the previous round?'
+        label_belief_A_migrant = 'How many fish do you believe <b>Fisher 1</b> has caught in the previous round?'
+        label_belief_B_migrant = 'How many fish do you believe <b>Fisher 2</b> has caught in the previous round?'
+        label_normative_belief_A = 'How much do you think <b>Fisher 1</b> <u>should</u> have caught in the previous round?'
+        label_normative_belief_B = 'How much do you think <b>Fisher 2</b> <u>should</u> have caught in the previous round?'
+        return dict(label_belief_A_local=label_belief_A_local, label_belief_B_local=label_belief_B_local,
+                    label_belief_A_migrant=label_belief_A_migrant, label_belief_B_migrant=label_belief_B_migrant,
+                    label_normative_belief_A=label_normative_belief_A, label_normative_belief_B=label_normative_belief_B)
+
+
 class WaitEndOfRound(WaitPage):
+    template_name = 'MyWaitPage.html'
+
     @staticmethod
     def after_all_players_arrive(group: Group):
         current_round = group.round_number
         if current_round == 10:
+            # Calculate remaining stock in the lake, divide by 3 and distribute payoff ####
             p1 = group.get_player_by_id(1)
             p2 = group.get_player_by_id(2)
             p3 = group.get_player_by_id(3)
@@ -116,8 +175,32 @@ class WaitEndOfRound(WaitPage):
             for player in players:
                 player.participant.payoff += leftover_per_player
 
-    titel_text = "Please Wait"
-    body_text = " The game will continue shortly."
+            # Calculate payoffs related to correct 'beliefs' predictions ####
+            players_history = [player.in_all_rounds() for player in players]
+            belief_payoffs = [0, 0, 0]
+
+            for player in [0, 1, 2]:
+                i = 0
+                for player_round in players_history[player]:
+                    if player_round.field_maybe_none('empirical_belief_A') == players_history[0][i].fished_amount:
+                        belief_payoffs[player] += 100
+                    if player_round.field_maybe_none('empirical_belief_B') == players_history[1][i].fished_amount:
+                        belief_payoffs[player] += 100
+                    i += 1
+            p1.participant.payoff += belief_payoffs[0]
+            p2.participant.payoff += belief_payoffs[1]
+            p3.participant.payoff += belief_payoffs[2]
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        current_round = player.round_number
+        fished_amount_A = 0
+        fished_amount_B = 0
+        if current_round > 1:
+            teammates = player.get_others_in_group()
+            fished_amount_A = teammates[0].in_round(current_round - 1).fished_amount
+            fished_amount_B = teammates[1].in_round(current_round - 1).fished_amount
+        return dict(fished_amount_A=fished_amount_A, fished_amount_B=fished_amount_B)
 
 
 class Results(Page):
@@ -126,4 +209,4 @@ class Results(Page):
         return player.round_number == 10
 
 
-page_sequence = [CalculateRemainingStock, Fishing, WaitEndOfRound, Results]
+page_sequence = [CalculateRemainingStock, Fishing, Belief, WaitEndOfRound, Results]

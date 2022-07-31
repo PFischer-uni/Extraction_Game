@@ -106,7 +106,6 @@ class CalculateRemainingStock(WaitPage):
         calculate_remaining_stock_A(group)
         calculate_remaining_stock_B(group)
 
-    titel_text = "Please Wait"
     body_text = "The game will continue shortly."
 
 
@@ -120,7 +119,6 @@ class Fishing(Page):
             return player.group.current_stock_B > 3
         else:
             return player.group.current_stock_A > 3
-
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -177,7 +175,6 @@ class WaitEndOfRound(WaitPage):
             p1.participant.payoff += belief_payoffs[0]
             p2.participant.payoff += belief_payoffs[1]
 
-    titel_text = "Please Wait"
     body_text = " The game will continue shortly."
 
 class Results(Page):

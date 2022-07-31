@@ -2,9 +2,20 @@
 {{ block content }}
 
     <p>
-        There are {{if player.round_number > 1 }} now {{ endif }} <b>{{ group.current_stock }}</b> fish in the lake.
-        {{if player.round_number > 1 }} Your {{if player.round_number > 5 }}teammates have {{else}} teammate has
-        {{ endif }} caught <b>{{ others_total_fished_amount }}</b> fish in the previous round.{{ endif }}
+        There are {{if player.round_number > 1 }} now {{ endif }} <b>{{ group.current_stock }}</b> fish in the lake.</br>
+        {{ if player.id_in_group != 3 }}
+            {{if player.round_number > 1 }}
+                Your <b>teammate</b> has fished  <b>{{ fished_amount_A }}</b> fish in the previous round.</br>
+                {{ if player.round_number > 6 }}
+                    The <b>new fisher</b> has fished  <b>{{ fished_amount_B }}</b> fish in the previous round.
+                {{ endif }}
+            {{ endif }}
+        {{ else }}
+            {{ if player.round_number > 5 }}
+                <b>Fisher 1</b> has fished  <b>{{ fished_amount_A }}</b> fish in the previous round.</br>
+                <b>Fisher 2</b> has fished  <b>{{ fished_amount_B }}</b> fish in the previous round.
+            {{ endif }}
+        {{ endif }}
     </p>
 
     {{ formfields }}

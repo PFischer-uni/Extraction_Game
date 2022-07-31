@@ -1,0 +1,20 @@
+{{ block title }}Player ({{player.id_in_group}}) Extraction Game: Your Choice{{ endblock }}
+{{ block content }}
+
+    {{ if player.id_in_group != 3 }}
+        {{ formfield 'empirical_belief_A' label=label_belief_A_local }}
+        {{ if player.round_number > 5 }} {{ formfield 'empirical_belief_B' label=label_belief_B_local }} {{ endif }}
+
+    {{ else }}
+        {{ if player.round_number > 5 }}
+            {{ formfield 'empirical_belief_A' label=label_belief_A_migrant }}
+            {{ formfield 'empirical_belief_B' label=label_belief_B_migrant }}
+            {{ formfield 'normative_belief_A' label=label_normative_belief_A}}
+            {{ formfield 'normative_belief_B' label=label_normative_belief_B}}
+        {{ endif }}
+
+    {{ endif }}
+
+    {{ next_button }}
+
+{{ endblock }}

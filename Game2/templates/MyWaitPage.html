@@ -1,0 +1,25 @@
+{% extends "otree/WaitPage.html" %}
+{{ block title }}{{ title_text }}{{ endblock }}
+{{ block content }}
+    {{ if player.id_in_group != 3 }}
+        <p>
+            The game will continue shortly.
+        </p>
+    {{ else }}
+        {{ if player.round_number == 1 }}
+            <p>
+                There are <b>{{ group.current_stock }}</b> fishes in the lake.</br>
+            </p>
+        {{ elif player.round_number < 6 }}
+            <p>
+                There are now <b>{{ group.current_stock }}</b> fishes in the lake.</br>
+                <b>Fisher 1</b> has fished <b>{{fished_amount_A}}</b> fish in the previous round.</br>
+                <b>Fisher 2</b> has fished <b>{{fished_amount_B}}</b> fish in the previous round.
+            </p>
+        {{ else}}
+            <p>
+                The game will continue shortly.
+            </p>
+        {{ endif }}
+    {{ endif }}
+{{ endblock }}
