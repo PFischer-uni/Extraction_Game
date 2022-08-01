@@ -79,24 +79,22 @@ def calculate_remaining_stock_A(group):
     current_round = group.round_number
     if current_round > 1:
         previous_stock = group.in_round(current_round - 1).current_stock_A
-        if previous_stock > 2:
-            p1 = group.get_player_by_id(1)
-            p1_fished = p1.in_round(current_round - 1).fished_amount
-            p2 = group.get_player_by_id(2)
-            p2_fished = p2.in_round(current_round - 1).fished_amount
-            new_stock = round((previous_stock - p1_fished - p2_fished) * C.REGROWTH_RATE)
-            group.current_stock_A = C.INITIAL_STOCK_A if new_stock > C.INITIAL_STOCK_A else new_stock
+        p1 = group.get_player_by_id(1)
+        p1_fished = p1.in_round(current_round - 1).field_maybe_none('fished_amount')
+        p2 = group.get_player_by_id(2)
+        p2_fished = p2.in_round(current_round - 1).field_maybe_none('fished_amount')
+        new_stock = round((previous_stock - p1_fished - p2_fished) * C.REGROWTH_RATE)
+        group.current_stock_A = C.INITIAL_STOCK_A if new_stock > C.INITIAL_STOCK_A else new_stock
 
 
 def calculate_remaining_stock_B(group):
     current_round = group.round_number
     if current_round > 1:
         previous_stock = group.in_round(current_round - 1).current_stock_B
-        if previous_stock > 2:
-            p3 = group.get_player_by_id(3)
-            p3_fished = p3.in_round(current_round - 1).fished_amount
-            new_stock = round((previous_stock - p3_fished) * C.REGROWTH_RATE)
-            group.current_stock_B = C.INITIAL_STOCK_B if new_stock > C.INITIAL_STOCK_B else new_stock
+        p3 = group.get_player_by_id(3)
+        p3_fished = p3.in_round(current_round - 1).field_maybe_none('fished_amount')
+        new_stock = round((previous_stock - p3_fished) * C.REGROWTH_RATE)
+        group.current_stock_B = C.INITIAL_STOCK_B if new_stock > C.INITIAL_STOCK_B else new_stock
 
 
 # PAGES
@@ -107,6 +105,41 @@ class CalculateRemainingStock(WaitPage):
         calculate_remaining_stock_B(group)
 
     body_text = "The game will continue shortly."
+
+
+class FishingTable(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        if player.id_in_group != 3:
+            return player.group.current_stock_A > 2
+        else:
+            return player.group.current_stock_B > 2
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        table_data = []
+        player_history = [p.in_all_rounds() for p in player.group.get_players()]
+        if player.id_in_group != 3:
+            stock_history = [group_in_round.current_stock_A for group_in_round in player.group.in_all_rounds()]
+            for round_number in range(1, player.round_number):
+                round_stock = stock_history[round_number-1]
+                p1_fished = player_history[0][round_number-1].field_maybe_none('fished_amount')
+                p2_fished = player_history[1][round_number-1].field_maybe_none('fished_amount')
+                round_data = [round_number, round_stock, f'<span style="color:blue">{p1_fished}</span>',
+                              f'<span style="color:blue">{p2_fished}</span>',
+                              round_stock - p1_fished - p2_fished]
+                table_data.append(round_data)
+            table_data.append([player.round_number, player.group.current_stock_A, '', '', ''])
+        else:
+            stock_history = [group_in_round.current_stock_B for group_in_round in player.group.in_all_rounds()]
+            for round_number in range(1, player.round_number):
+                round_stock = stock_history[round_number - 1]
+                p3_fished = player_history[2][round_number - 1].field_maybe_none('fished_amount')
+                round_data = [round_number, round_stock, f'<span style="color:green">{p3_fished}</span>',
+                              round_stock - p3_fished]
+                table_data.append(round_data)
+            table_data.append([player.round_number, player.group.current_stock_B, '', ''])
+        return dict(table_data=table_data)
 
 
 class Fishing(Page):
@@ -141,7 +174,7 @@ class Belief(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return player.id_in_group != 3
+        return player.id_in_group != 3 and player.group.current_stock_A > 2
 
 
 class WaitEndOfRound(WaitPage):
@@ -177,10 +210,22 @@ class WaitEndOfRound(WaitPage):
 
     body_text = " The game will continue shortly."
 
+
 class Results(Page):
     @staticmethod
     def is_displayed(player: Player):
         return player.round_number == 10
 
+    @staticmethod
+    def vars_for_template(player: Player):
+        players_history = player.in_all_rounds()
+        caught_fish = 0
+        for player_round in players_history:
+            caught_fish += player_round.fished_amount
+        leftover_per_player = math.floor(player.group.current_stock_A / 2) if player.id_in_group != 3\
+            else player.group.current_stock_B
+        total_fish = leftover_per_player + caught_fish
+        return dict(caught_fish=caught_fish, total_fish=total_fish)
 
-page_sequence = [CalculateRemainingStock, Fishing, Belief, WaitEndOfRound, Results]
+
+page_sequence = [CalculateRemainingStock, FishingTable, Fishing, Belief, WaitEndOfRound, Results]

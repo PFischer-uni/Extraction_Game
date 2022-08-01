@@ -1,0 +1,49 @@
+{{ block title }}You are Fisher {{player.id_in_group}} Extraction Game: Your Choice{{ endblock }}
+{{ block content }}
+<style>
+    table {
+        text-align: right;
+    }
+    th {
+        padding: 0 10px;
+        border-right: 1px solid #bbbbbb;
+    }
+    td {
+        padding: 0 10px;
+        border-right: 1px solid #bbbbbb;
+    }
+    tr:last-child {
+        background-color: #dddddd;
+    }
+</style>
+
+    <p>
+        History
+        <table>
+            <tr>
+                <th>Round</th>
+                <th>Beginning Stock</th>
+                {{ if player.id_in_group != 3 }}
+                    <th>Fisher 1 Fished</th>
+                    <th>Fisher 2 Fished</th>
+                {{ else }}
+                    <th>Fisher 3 Fished</th>
+                {{ endif }}
+                <th>End Stock</th>
+            </tr>
+            {{ for round in table_data}}
+                <tr>
+                    {{ for data in round }}
+                        <td>
+                            {{ data }}
+                        </td>
+                    {{ endfor }}
+                </tr>
+            {{ endfor }}
+        </table>
+
+    </p>
+
+    {{ next_button }}
+
+{{ endblock }}

@@ -4,7 +4,15 @@
 {{ block content }}
 
     <p>
-        The remaining amount of fish in the lake is: <b>{{ if player.id_in_group != 3 }} {{ group.current_stock_A }} {{ else }} {{ group.current_stock_B  }} {{ endif }}</b>
+        You caught: <b>{{ caught_fish }}</b> fish.
+    </p>
+
+    <p>
+        The remaining amount of fish in the lake is: <b>{{ if player.id_in_group != 3 }} {{ group.current_stock_A }} {{ else }} {{ group.current_stock_B }} {{ endif }}</b> fish.
+    </p>
+
+    <p>
+        Your total number of fish: <b>{{ total_fish }}</b> fish.
     </p>
 
     <p>
