@@ -11,8 +11,11 @@ class C(BaseConstants):
     NAME_IN_URL = 'Game2'
     PLAYERS_PER_GROUP = 3
     NUM_ROUNDS = 10
-    INITIAL_STOCK = 101
-    MAX_EXTRACTION = [0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10]
+    INITIAL_STOCK = 120
+    MAX_EXTRACTION = [0,0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,8,9,9,9,9,9,
+                      10,10,10,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,12,12,12,12,12,12,
+                      12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
+                      13,13,13,13,13,13,13,13,13]
     REGROWTH_RATE = 1.1
 
 
@@ -75,7 +78,7 @@ def calculate_remaining_stock(group):
     current_round = group.round_number
     if current_round > 1:
         previous_stock = group.in_round(current_round - 1).current_stock
-        if previous_stock > 3:
+        if previous_stock > 2:
             p1 = group.get_player_by_id(1)
             p1_fished = p1.in_round(current_round - 1).fished_amount
             p2 = group.get_player_by_id(2)
@@ -102,9 +105,9 @@ class Fishing(Page):
     @staticmethod
     def is_displayed(player: Player):
         if player.round_number < 6:
-            return player.group.current_stock > 3 and player.id_in_group != 3
+            return player.group.current_stock > 2 and player.id_in_group != 3
         else:
-            return player.group.current_stock > 3
+            return player.group.current_stock > 2
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -141,17 +144,17 @@ class Belief(Page):
         skipped_round = False
         current_round = player.round_number
         if current_round > 1:
-            skipped_round = player.group.in_round(current_round - 1).current_stock < 3
+            skipped_round = player.group.in_round(current_round - 1).current_stock < 2
         return (player.id_in_group != 3 or player.round_number > 5) and not skipped_round
 
     @staticmethod
     def vars_for_template(player: Player):
-        label_belief_A_local = 'How many fish do you believe your <b>teammate</b> has caught in the previous round?'
-        label_belief_B_local = 'How many fish do you believe the <b>new fisher</b> has caught in the previous round?'
-        label_belief_A_migrant = 'How many fish do you believe <b>Fisher 1</b> has caught in the previous round?'
-        label_belief_B_migrant = 'How many fish do you believe <b>Fisher 2</b> has caught in the previous round?'
-        label_normative_belief_A = 'How much do you think <b>Fisher 1</b> <u>should</u> have caught in the previous round?'
-        label_normative_belief_B = 'How much do you think <b>Fisher 2</b> <u>should</u> have caught in the previous round?'
+        label_belief_A_local = 'How many fish do you believe your <b>teammate</b> has caught in this round?'
+        label_belief_B_local = 'How many fish do you believe the <b>new fisher</b> has caught in this round?'
+        label_belief_A_migrant = 'How many fish do you believe <b>Fisher 1</b> has caught in this round?'
+        label_belief_B_migrant = 'How many fish do you believe <b>Fisher 2</b> has caught in this round?'
+        label_normative_belief_A = 'How much do you think <b>Fisher 1</b> <u>should</u> have caught in this round?'
+        label_normative_belief_B = 'How much do you think <b>Fisher 2</b> <u>should</u> have caught in this round?'
         return dict(label_belief_A_local=label_belief_A_local, label_belief_B_local=label_belief_B_local,
                     label_belief_A_migrant=label_belief_A_migrant, label_belief_B_migrant=label_belief_B_migrant,
                     label_normative_belief_A=label_normative_belief_A, label_normative_belief_B=label_normative_belief_B)

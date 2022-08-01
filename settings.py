@@ -3,14 +3,9 @@ from os import environ
 SESSION_CONFIGS = [
     dict(
         name='Extraction_Game',
-        app_sequence=['Comprehension1', 'Game1', 'Game2'],
-        num_demo_participants=3,
-    )
-    # dict(
-    #     name='public_goods',
-    #     app_sequence=['public_goods'],
-    #     num_demo_participants=3,
-    # ),
+        app_sequence=['Game2'],
+        #app_sequence=['Comprehension1', 'Game1', 'Comprehension2', 'Game2']
+        num_demo_participants=3)
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs

@@ -6,7 +6,7 @@ comprehension question 1
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'comprehension'
+    NAME_IN_URL = 'comprehension1'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
 
@@ -20,7 +20,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    quiz1 = models.IntegerField(label='Imagine that you play the game with two fishers at the lake. After both fisherhave decided how many fish to catch, there are 40 fish left in the lake. How many fish will be in the lake in the next round?',
+    quiz1 = models.IntegerField(label='Imagine that you play the game with two fishers at the lake. After both fishers have decided how many fish to catch, there are 40 fish left in the lake. How many fish will be in the lake in the next round?',
                                 choices=[44, 40, 48],
                                 widget=widgets.RadioSelect,
                                 blank=False

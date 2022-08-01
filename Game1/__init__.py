@@ -54,7 +54,7 @@ class Player(BasePlayer):
         min=0,
         max=C.MAX_EXTRACTION[-1],
         doc="""Belief about what the other has fished""",
-        label="How many fish do you believe your teammate has caught in the previous round?"
+        label="How many fish do you believe your <b>teammate</b> has caught in this round?"
     )
 
 
@@ -79,7 +79,7 @@ def calculate_remaining_stock_A(group):
     current_round = group.round_number
     if current_round > 1:
         previous_stock = group.in_round(current_round - 1).current_stock_A
-        if previous_stock > 3:
+        if previous_stock > 2:
             p1 = group.get_player_by_id(1)
             p1_fished = p1.in_round(current_round - 1).fished_amount
             p2 = group.get_player_by_id(2)
@@ -92,7 +92,7 @@ def calculate_remaining_stock_B(group):
     current_round = group.round_number
     if current_round > 1:
         previous_stock = group.in_round(current_round - 1).current_stock_B
-        if previous_stock > 3:
+        if previous_stock > 2:
             p3 = group.get_player_by_id(3)
             p3_fished = p3.in_round(current_round - 1).fished_amount
             new_stock = round((previous_stock - p3_fished) * C.REGROWTH_RATE)
@@ -116,9 +116,9 @@ class Fishing(Page):
     @staticmethod
     def is_displayed(player: Player):
         if player.id_in_group == 3:
-            return player.group.current_stock_B > 3
+            return player.group.current_stock_B > 2
         else:
-            return player.group.current_stock_A > 3
+            return player.group.current_stock_A > 2
 
     @staticmethod
     def vars_for_template(player: Player):
