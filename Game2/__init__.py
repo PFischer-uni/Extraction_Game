@@ -29,7 +29,7 @@ class Group(BaseGroup):
         min=0,
         max=C.INITIAL_STOCK,
         doc="""Current Stock""",
-        label="Fishes left"
+        label="Fish left"
     )
 
 
@@ -170,12 +170,12 @@ class Belief(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        label_belief_A_local = 'How many fish do you believe your <b>teammate</b> has caught in this round?'
-        label_belief_B_local = 'How many fish do you believe the <b>new fisher</b> has caught in this round?'
-        label_belief_A_migrant = 'How many fish do you believe <b>Fisher 1</b> has caught in this round?'
-        label_belief_B_migrant = 'How many fish do you believe <b>Fisher 2</b> has caught in this round?'
-        label_normative_belief_A = 'How much do you think <b>Fisher 1</b> <u>should</u> have caught in this round?'
-        label_normative_belief_B = 'How much do you think <b>Fisher 2</b> <u>should</u> have caught in this round?'
+        label_belief_A_local = 'How many fish do you believe your <b><span style="color:blue">teammate</span></b> has caught in this round?'
+        label_belief_B_local = 'How many fish do you believe the <b><span style="color:green">new fisher</span></b> has caught in this round?'
+        label_belief_A_migrant = 'How many fish do you believe <b><span style="color:blue">Fisher 1</span></b> has caught in this round?'
+        label_belief_B_migrant = 'How many fish do you believe <b><span style="color:blue">Fisher 2</span></b> has caught in this round?'
+        label_normative_belief_A = 'How much do you think <b><span style="color:blue">Fisher 1</span></b> <u>should</u> have caught in this round?'
+        label_normative_belief_B = 'How much do you think <b><span style="color:blue">Fisher 2</span></b> <u>should</u> have caught in this round?'
         return dict(label_belief_A_local=label_belief_A_local, label_belief_B_local=label_belief_B_local,
                     label_belief_A_migrant=label_belief_A_migrant, label_belief_B_migrant=label_belief_B_migrant,
                     label_normative_belief_A=label_normative_belief_A, label_normative_belief_B=label_normative_belief_B)
@@ -213,6 +213,8 @@ class WaitEndOfRound(WaitPage):
             p1.participant.payoff += belief_payoffs[0]
             p2.participant.payoff += belief_payoffs[1]
             p3.participant.payoff += belief_payoffs[2]
+
+    body_text = "The game will continue shortly."
 
 
 class Results(Page):

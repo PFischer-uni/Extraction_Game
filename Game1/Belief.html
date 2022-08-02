@@ -1,8 +1,10 @@
-{{ block title }}Player ({{player.id_in_group}}) Extraction Game: Your Choice{{ endblock }}
+{{ block title }}You are Fisher {{player.id_in_group}}
+<p>You are in Round {{player.round_number}}</p>
+{{ endblock }}
 {{ block content }}
 
 
-    {{ formfields }}
+   {{ formfields }}
 
     {{ next_button }}
 

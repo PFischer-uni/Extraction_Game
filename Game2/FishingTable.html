@@ -1,4 +1,6 @@
-{{ block title }}You are Fisher {{player.id_in_group}} Extraction Game: Your Choice{{ endblock }}
+{{ block title }}You are Fisher {{player.id_in_group}}
+<p>You are in Round {{player.round_number}}</p>
+{{ endblock }}
 {{ block content }}
 <style>
     table {
@@ -18,14 +20,13 @@
 </style>
 
     <p>
-        History
         <table>
             <tr>
                 <th>Round</th>
                 <th>Beginning Stock</th>
-                <th>Fisher 1 Fished</th>
-                <th>Fisher 2 Fished</th>
-                <th>Fisher 3 Fished</th>
+                <th><span style="color:blue">Fisher 1 Fished</span></th>
+                <th><span style="color:blue">Fisher 2 Fished</span></th>
+                <th><span style="color:green">Fisher 3 Fished</span></th>
                 <th>End Stock</th>
             </tr>
             {{ for round in table_data}}

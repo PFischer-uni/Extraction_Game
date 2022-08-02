@@ -1,3 +1,4 @@
+import blue as blue
 from otree.api import *
 import math
 
@@ -30,14 +31,14 @@ class Group(BaseGroup):
         min=0,
         max=C.INITIAL_STOCK_A,
         doc="""Current Stock""",
-        label="Fishes left"
+        label="Fish left"
     )
     current_stock_B = models.IntegerField(
         initial=C.INITIAL_STOCK_B,
         min=0,
         max=C.INITIAL_STOCK_B,
         doc="""Current Stock""",
-        label="Fishes left"
+        label="Fish left"
     )
 
 
@@ -54,8 +55,7 @@ class Player(BasePlayer):
         min=0,
         max=C.MAX_EXTRACTION[-1],
         doc="""Belief about what the other has fished""",
-        label="How many fish do you believe your <b>teammate</b> has caught in this round?"
-    )
+        label="How many fish do you believe your <b><span style='color:blue'>teammate</span><</b> has caught in this round?")
 
 
 # FUNCTIONS
